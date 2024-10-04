@@ -1,0 +1,11 @@
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+
+{
+    "name": "Leia Organa",
+    "hobbies": ["diplomacy", "strategy"],
+    "years": 8,
+    "team": "rebels",
+    "faction": "Rebel Alliance"
+}
+
