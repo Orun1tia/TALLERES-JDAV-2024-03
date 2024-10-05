@@ -1,99 +1,80 @@
 import { Router, Request, Response } from "express";
-import { readUsers } from "./user.controller";
+import { readExisting, readExperience, readHobbies, readPilots} from "./user.controller";
 
 // INIT ROUTES
 const userRoutes = Router();
 
 // DECLARE ENDPOINT FUNCTIONS
-async function GetUsers(request: Request, response: Response) {
-  const users = await readUsers();
-
-  response.status(200).json({
-    message: "Success.",
-    users: users,
-  });
-}
-
 async function GetHobbies(request: Request, response: Response) {
-  const hobby = request.params.hobby.toLowerCase();
-  const users = await readUsers();
+  const hobby = request.query.hobby as string; 
+  const answer = await readHobbies(hobby);
 
-  const filtered = users.filter((user) => user.hobbies.includes(hobby))
   response.status(200).json({
     message: "Success.",
-    users: filtered,
+    users: answer,
   });
 }
 
 async function GetExists(request: Request, response: Response) {
-  const id = request.params.id;
-  const users = await readUsers();
+  const id = Number(request.query.id); 
+  const answer = await readExisting(id);
 
-  const filtered = users.filter((user) => user.id === Number(id))
   response.status(200).json({
     message: "Success.",
-    users: filtered,
+    users: answer,
   });
 }
 
 async function GetExperience(request: Request, response: Response) {
-  const team = request.params.team;
-  const users = await readUsers();
-
-  const filtered = users.reduce((contador, user) => {
-    if (user.team === team) {
-      return contador + user.years;
-    }
-    return contador;
-  }, 0);
+  const team = request.query.team as string; 
+  const answer = await readExperience(team);
+  
   response.status(200).json({
     message: "Success.",
-    years: filtered,
+    experienceYears: answer,
   });
 }
 
 async function GetPilots(request: Request, response: Response) {
-  const faction = request.params.faction.toLowerCase();
-  const users = await readUsers();
+  const faction = request.query.faction as string; 
+  const answer = await readPilots(faction);
 
-  const filtered = users.filter((user) => user.faction.toLowerCase() === faction)
   response.status(200).json({
     message: "Success.",
-    users: filtered,
+    users: answer,
   });
 }
 
-async function CreateUser(request: Request, response: Response) {
-  const { name, hobbies, years, team, faction } = request.body; 
+// async function CreateUser(request: Request, response: Response) {
+//   const { name, hobbies, years, team, faction } = request.body; 
 
-  if (!name || !hobbies || !years || !team || !faction) {
-    return response.status(400).json({
-      message: "Missing data!!!!!!.",
-    });
-  }
+//   if (!name || !hobbies || !years || !team || !faction) {
+//     return response.status(400).json({
+//       message: "Missing data!!!!!!.",
+//     });
+//   }
 
-  const users = await readUsers(); 
-  const newId = users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1; 
+//   const users = await readUsers(); 
+//   const newId = users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1; 
 
-  const newUser = {
-    id: newId, name, hobbies, years, team, faction,
-  };
+//   const newUser = {
+//     id: newId, name, hobbies, years, team, faction,
+//   };
 
-  users.push(newUser);
+//   users.push(newUser);
 
-  response.status(201).json({
-    message: "New user:",
-    user: newUser,
-  });
-}
+//   response.status(201).json({
+//     message: "New user:",
+//     user: newUser,
+//   });
+// }
 
 
 // DECLARE ENDPOINTS
-userRoutes.get("/", GetUsers);
-userRoutes.post("/", CreateUser);
-userRoutes.get("/hobby/:hobby", GetHobbies);
-userRoutes.get("/exists/:id", GetExists);
-userRoutes.get("/team-experience/:team", GetExperience);
-userRoutes.get("/by-faction/:faction", GetPilots);
+// userRoutes.post("/", CreateUser);
+userRoutes.get("/hobby", GetHobbies);
+userRoutes.get("/exists", GetExists);
+userRoutes.get("/team-experience", GetExperience);
+userRoutes.get("/by-faction", GetPilots);
 // EXPORT ROUTES
 export default userRoutes;
