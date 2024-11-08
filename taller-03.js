@@ -3,9 +3,9 @@
 function desglosarString(palabra, tipo) {
     vocales = 'AEIOUaeiou'
 
-    if (tipo === 'vocal') {
+    if (tipo === 'vocales') {
         return palabra.split('').filter(letra => vocales.includes(letra)).length
-    } else if (tipo === 'consonante') {
+    } else if (tipo === 'consonantes') {
         return palabra.split('').filter(letra => !vocales.includes(letra)).length
     }
 
